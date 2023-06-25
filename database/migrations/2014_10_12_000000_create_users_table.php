@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('password'); 
             $table->enum('role', ['client', 'admin']);
-            $table->string('remember_token', 100);
+            $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
         });

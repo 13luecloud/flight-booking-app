@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Repositories\User\UserRepositoryInterface; 
 
@@ -42,7 +44,7 @@ class UserController extends Controller
      */
     public function store(CreateUserRequest $request) 
     {
-       return $this->repository->createUser($request->validated());
+        return $this->repository->createUser($request->validated());
     }
 
     /**
@@ -88,10 +90,5 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
-    }
-
-    public function createUser(CreateUserRequest $request)
-    {
-        return $this->repository->createUser($request->validated());
     }
 }
