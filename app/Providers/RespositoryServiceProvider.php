@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+use App\Http\Repositories\UserRepository; 
+use App\Http\Repositories\UserRepositoryInterface; 
+
 class RespositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -23,6 +26,6 @@ class RespositoryServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Put all interface-repository bindings here
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
     }
 }
