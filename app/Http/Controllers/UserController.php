@@ -36,6 +36,6 @@ class UserController extends Controller
 
     public function logout() 
     {
-        Auth::logout();
+        Auth::user()->currentAccessToken()->delete();
     }
 }
