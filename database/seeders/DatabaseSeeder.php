@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User; 
 use App\Models\City;
 use App\Models\Route;
+use App\Models\Flight;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,7 +19,8 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(5)->create();
         User::factory(5)->create(['role' => 'admin']);
-        City::factory(3)->create();
-        Route::factory(3)->create();
+        City::factory(5)->create();
+        Route::factory(5)->create();
+        Flight::factory(7)->create();
     }
 }
