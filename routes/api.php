@@ -16,7 +16,11 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Route::apiResource('user', UserController::class)->only(['store']);
+Route::controller(UserController::class)->group(function() {
+    Route::post('/register', 'store');
+    Route::post('/login', 'login');
+    Route::post('/logout', 'logout');
+});
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
