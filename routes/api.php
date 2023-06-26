@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,11 @@ Route::controller(UserController::class)->group(function() {
     Route::post('/login', 'login');
 });
 
-Route::middleware('auth:sanctum')->group(function ()  {
-    Route::post('/logout',[ UserController::class, 'logout']);
+Route::group(['middleware' => 'auth:sanctum'], function() {
+    // Shared routes
+
+    //Role-based routes
+    Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function() {
+        Route::apiResource('city', CityController::class);
+    });
 });

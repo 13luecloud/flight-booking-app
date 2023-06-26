@@ -26,18 +26,18 @@ class APIResponseProvider extends ServiceProvider
     {
         Response::macro('success', function ($message = '', $data = NULL) {
             return Response::json([
-                'status' => true,
+                'success' => true,
                 'message' => $message,
                 'data' => $data,
             ]);
         });
 
-        Response::macro('fail', function ($message = '', $errors = []) {
+        Response::macro('error', function ($message = '', $errors = [], $status) {
             return Response::json([
-                'status' => false,
+                'success' => false,
                 'message' => $message,
                 'errors' => $errors,
-            ]);
+            ], $status);
         });
     }
 }
