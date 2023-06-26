@@ -33,6 +33,17 @@ class CityRepository implements CityRepositoryInterface
         );
 
     }
+
+    public function getAllCities()
+    {
+        $cities = City::all();
+        return response()->success(
+            'Successfully fetched all Cities',
+            [
+                'cities' => $cities
+            ]
+        );
+    }
     
     private function doesExists(String $city)
     {
