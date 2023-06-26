@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateCityRequest extends FormRequest
@@ -13,6 +14,12 @@ class CreateCityRequest extends FormRequest
      */
     public function authorize()
     {
+        $user = Auth::user();
+        if($user->role === 'admin')
+        {
+            return true;
+        }
+        
         return false;
     }
 

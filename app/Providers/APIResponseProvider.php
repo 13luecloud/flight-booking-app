@@ -32,12 +32,12 @@ class APIResponseProvider extends ServiceProvider
             ]);
         });
 
-        Response::macro('fail', function ($message = '', $errors = []) {
+        Response::macro('fail', function ($message = '', $errors = [], $status) {
             return Response::json([
                 'status' => false,
                 'message' => $message,
                 'errors' => $errors,
-            ]);
+            ], $status);
         });
     }
 }

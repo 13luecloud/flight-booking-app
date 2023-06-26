@@ -10,21 +10,20 @@ use App\Models\City;
 class CityRepository implements CityRepositoryInterface 
 {
     public function createCity(array $data)
-    {
-        log::info('In repository');
-        
-        $doesExists = $this->doesExists($data->name);
-        if (!$doesExists) {
-            return response()->fail([
-                'The given data was invalid',
+    {        
+        $doesExists = $this->doesExists($data['name']);
+        if ($doesExists) {
+            return response()->fail(
+                'The given data was invalid', 
                 [
-                    'name' => 'The City name already exists'
+                    'name' => ['The name ' . $data['name'] . ' City already exists']
                 ],
-            ], 422);
+                422
+            );
         }
 
-        $code = strtoupper(substr($data->name, 0, 3));
-        $data->code = $code;
+        $code = strtoupper(substr($data['name'], 0, 3));
+        $data['code'] = $code;
         $city = City::create($data);
         return response()->success(
             'Successfully created City', 
