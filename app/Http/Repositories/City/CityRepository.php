@@ -10,20 +10,9 @@ use App\Models\City;
 class CityRepository implements CityRepositoryInterface 
 {
     public function createCity(array $data)
-    {        
-        $doesExists = $this->doesExists($data['name']);
-        if ($doesExists) {
-            return response()->fail(
-                'The given data was invalid', 
-                [
-                    'name' => ['The name ' . $data['name'] . ' City already exists']
-                ],
-                422
-            );
-        }
-
-        $code = strtoupper(substr($data['name'], 0, 3));
-        $data['code'] = $code;
+    {  
+        
+        $data['code'] = $this->generateCode($data['name']);
         $city = City::create($data);
         return response()->success(
             'Successfully created City', 
@@ -32,6 +21,40 @@ class CityRepository implements CityRepositoryInterface
             ]
         );
 
+    }
+
+    public function editCity(array $data, int $id)
+    {
+        if($this->isADuplicate($data['name'], $id)) {
+            return response()->fail(
+                'The given data was invalid',
+                [
+                    'city' => ['City already exists']
+                ], 
+                422
+            );
+        }
+
+        $data['code'] = $this->generateCode($data['name']);
+        City::where('id', $id)->update($data);
+
+        try {
+            $city = City::findOrFail($id);
+            return response()->success(
+                'Successfully updated ' . $city->name . ' City', 
+                [
+                    'city' => $city
+                ]
+            );
+        } catch(ModelNotFoundException $e) {
+            return response()->fail(
+                'No query results for City',
+                [
+                    'city' => ['City does not exists']
+                ],
+                404
+            );
+        }
     }
 
     public function getAllCities()
@@ -44,11 +67,12 @@ class CityRepository implements CityRepositoryInterface
             ]
         );
     }
-    
-    private function doesExists(String $city)
+
+    private function isADuplicate(String $city, int $id)
     {
         $currentCity = strtoupper($city);
-        foreach(City::all() as $city) {
+        $savedCities = City::where('id', '<>', $id)->get();
+        foreach($savedCities as $city) {
             $savedCity = strtoupper($city->name);
             $savedCity = str_replace(' ', '', $savedCity);
 
@@ -58,5 +82,10 @@ class CityRepository implements CityRepositoryInterface
         }
 
         return false;
+    } 
+
+    private function generateCode(String $city)
+    {
+        return $code = strtoupper(substr($city, 0, 3));
     }
 }

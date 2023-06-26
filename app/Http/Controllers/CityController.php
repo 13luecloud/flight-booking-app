@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-use App\Http\Repositories\City\CityRepositoryInterface;
 use App\Http\Requests\CreateCityRequest; 
+use App\Http\Requests\EditCityRequest;
+use App\Http\Repositories\City\CityRepositoryInterface;
 
 class CityController extends Controller
 {
@@ -24,16 +25,6 @@ class CityController extends Controller
     public function index()
     {
         return $this->repository->getAllCities();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -60,26 +51,15 @@ class CityController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(EditCityRequest $request, $id)
     {
-        //
+        return $this->repository->editCity($request->validated(), $id);
     }
 
     /**
