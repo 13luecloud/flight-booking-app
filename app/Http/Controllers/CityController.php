@@ -65,7 +65,7 @@ class CityController extends Controller
         try {
             return response()->success('Successfully updated city', $data);
         } catch(Exception $e) {
-            return "ChiCKEN";
+            throw $e;
         }
     }
 

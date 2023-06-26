@@ -33,7 +33,7 @@ class CityRepository implements CityRepositoryInterface
 
     public function getAllCities()
     {
-        return $cities = City::all();
+        return City::all();
     }
 
     private function isADuplicate(String $city, int $id)
