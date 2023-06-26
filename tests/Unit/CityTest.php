@@ -22,9 +22,10 @@ class CityTest extends TestCase
         $this->repository = app(CityRepository::class);
     }
 
-    public function test_succeeds_create_cities()
+    public function test_unit_succeeds_create_cities()
     {
-        $cities = City::factory(3)->make();
+        $count = 3;
+        $cities = City::factory($count)->make();
         foreach($cities as $city) {
             $createdCity = $this->repository->createCity($city->toArray());
 
@@ -32,9 +33,11 @@ class CityTest extends TestCase
             $this->assertEquals($city['name'], $createdCity->name);
             $this->assertEquals($city['code'], $createdCity->code);
         }
+
+        $this->assertDatabaseCount('cities', $count);
     }
 
-    public function test_succeeds_get_all_cities()
+    public function test_unit_succeeds_get_all_cities()
     {
         $count = 3;
 
@@ -42,13 +45,15 @@ class CityTest extends TestCase
         $fetchedCities = $this->repository->getAllCities();
 
         for($i=0; $i < $count; $i++) {
+            $this->assertModelExists($createdCities[$i]);
+
             $this->assertEquals($createdCities[$i]->id, $fetchedCities[$i]->id);
             $this->assertEquals($createdCities[$i]->name, $fetchedCities[$i]->name);
             $this->assertEquals($createdCities[$i]->code, $fetchedCities[$i]->code);
         }
     }
 
-    public function test_succeeds_edit_city()
+    public function test_unit_succeeds_edit_city()
     {
         $createdCities = City::factory(2)->create();
         $toEditCity = City::first();
@@ -59,7 +64,7 @@ class CityTest extends TestCase
         $this->assertEquals($newName['name'], $newCity->name);
     }
 
-    public function test_fails_edit_city_cannot_find_object()
+    public function test_unit_fails_edit_city_cannot_find_object()
     {
         $count = 2;
         $createdCities = City::factory($count)->create();
@@ -69,7 +74,7 @@ class CityTest extends TestCase
         $this->expectException(ModelNotFoundException::class);
         $newCity = $this->repository->editCity($newName, $count+1);
         // Why is this throwing a green assertion when I don't have any assertions???????? 
-        
+
         // $this->assertStatus(404);
         // $this->assertJson($newCity, $strict = false);        
     }

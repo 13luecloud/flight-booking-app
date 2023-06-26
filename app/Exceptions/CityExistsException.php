@@ -11,7 +11,7 @@ class CityExistsException extends Exception
         return response()->json([
             'success' => false,
             'message' => 'The given data is invalid',
-            'error' => [
+            'errors' => [
                 'city' => 'City already exists'
             ]            
         ], 422);

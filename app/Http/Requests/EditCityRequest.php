@@ -31,7 +31,7 @@ class EditCityRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|alpha_num:ascii',
+            'name' => 'required|regex:/^[\pL\s]+$/u',
         ];
     }
 }
