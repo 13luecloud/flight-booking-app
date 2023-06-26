@@ -2,6 +2,8 @@
 
 namespace App\Http\Repositories\City;
 
+use App\Exceptions\CityExistsException;
+
 use Illuminate\Http\Response; 
 use Illuminate\Support\Facades\Log;
 
@@ -11,61 +13,27 @@ class CityRepository implements CityRepositoryInterface
 {
     public function createCity(array $data)
     {  
-        
         $data['code'] = $this->generateCode($data['name']);
-        $city = City::create($data);
-        return response()->success(
-            'Successfully created City', 
-            [
-                'city' => $city,
-            ]
-        );
-
+        return City::create($data);
     }
 
     public function editCity(array $data, int $id)
     {
+        City::findOrFail($id);
+
         if($this->isADuplicate($data['name'], $id)) {
-            return response()->fail(
-                'The given data was invalid',
-                [
-                    'city' => ['City already exists']
-                ], 
-                422
-            );
+            throw new CityExistsException;
         }
 
         $data['code'] = $this->generateCode($data['name']);
         City::where('id', $id)->update($data);
 
-        try {
-            $city = City::findOrFail($id);
-            return response()->success(
-                'Successfully updated ' . $city->name . ' City', 
-                [
-                    'city' => $city
-                ]
-            );
-        } catch(ModelNotFoundException $e) {
-            return response()->fail(
-                'No query results for City',
-                [
-                    'city' => ['City does not exists']
-                ],
-                404
-            );
-        }
+        return City::findOrFail($id);
     }
 
     public function getAllCities()
     {
-        $cities = City::all();
-        return response()->success(
-            'Successfully fetched all Cities',
-            [
-                'cities' => $cities
-            ]
-        );
+        return $cities = City::all();
     }
 
     private function isADuplicate(String $city, int $id)

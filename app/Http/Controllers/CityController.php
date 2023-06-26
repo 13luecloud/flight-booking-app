@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -24,7 +26,7 @@ class CityController extends Controller
      */
     public function index()
     {
-        return $this->repository->getAllCities();
+        return response()->success('Successfully retrieved all cities', $this->repository->getAllCities());
     }
 
     /**
@@ -35,8 +37,8 @@ class CityController extends Controller
      */
     public function store(CreateCityRequest $request)
     {
-        log::info('In controller');
-        return $this->repository->createCity($request->validated());
+        $data = $this->repository->createCity($request->validated());
+        return response()->success('Successfully created city', $data);
     }
 
     /**
@@ -59,7 +61,12 @@ class CityController extends Controller
      */
     public function update(EditCityRequest $request, $id)
     {
-        return $this->repository->editCity($request->validated(), $id);
+        $data = $this->repository->editCity($request->validated(), $id);
+        try {
+            return response()->success('Successfully updated city', $data);
+        } catch(Exception $e) {
+            return "ChiCKEN";
+        }
     }
 
     /**

@@ -31,7 +31,7 @@ class CreateCityRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|alpha_num:ascii|unique:cities,name',
+            'name' => 'required|regex:/^[\pL\s]+$/u|unique:cities,name',
         ];
     }
 }

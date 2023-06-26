@@ -9,9 +9,9 @@ class InvalidCredentialsException extends Exception
     public function render($request)
     {
         return response()->json([
-            'status' => false,
-            'error' => true,
-            'message' => 'Invalid credentials'
+            'success' => false,
+            'message' => 'Invalid credentials',
+            'error' => true            
         ], 401);
     }
 }
