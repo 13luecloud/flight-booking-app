@@ -26,8 +26,10 @@ class CityTest extends TestCase
         $cities = City::factory()->count(3)->make();
         foreach($cities as $city) {
             $createdCity = $this->repository->createCity($city->toArray());
-            log::info($createdCity);
+
+            $this->assertInstanceOf(City::class, $createdCity);
             $this->assertEquals($city['name'], $createdCity->name);
+            $this->assertEquals($city['code'], $createdCity->code);
         }
     }
 
