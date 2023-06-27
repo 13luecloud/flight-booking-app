@@ -2,10 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Repositories\Route\RouteRepositoryInterface;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RouteController extends Controller
 {
+    private $repository; 
+    public function __construct(RouteRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +22,7 @@ class RouteController extends Controller
      */
     public function index()
     {
-        //
+        return response()->success('Successfully retrieved all routes', $this->repository->getAllRoutes());
     }
 
     /**
