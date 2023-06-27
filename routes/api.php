@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\RouteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,5 +29,6 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     //Role-based routes
     Route::group(['prefix' => 'admin', 'middleware' => ['role:admin']], function() {
         Route::apiResource('city', CityController::class);
+        Route::apiResource('route', RouteController::class);
     });
 });
