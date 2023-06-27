@@ -4,11 +4,12 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Log;
-
 use App\Http\Repositories\City\CityRepository;
 use App\Models\City; 
+
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
 
 class CityTest extends TestCase
 {
@@ -70,8 +71,7 @@ class CityTest extends TestCase
         
         $newName = ['name' => 'New Name'];
 
+        $this->expectException(ModelNotFoundException::class);
         $newCity = $this->repository->editCity($newName, $count+1);
-        
-        $this->assertNull($newCity);      
     }
 }

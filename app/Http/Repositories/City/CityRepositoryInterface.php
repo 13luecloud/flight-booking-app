@@ -7,4 +7,5 @@ interface CityRepositoryInterface
     public function createCity(array $data);
     public function editCity(array $data, int $id);
     public function getAllCities();
+    public function deleteCity(int $id);
 }
