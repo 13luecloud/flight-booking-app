@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Repositories\Route\RouteRepositoryInterface;
+use App\Http\Requests\CreateRouteRequest;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -31,9 +32,9 @@ class RouteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateRouteRequest $request)
     {
-        //
+        return response()->success('Successfully created route', $this->repository->createRoute($request->validated()));
     }
 
     /**
