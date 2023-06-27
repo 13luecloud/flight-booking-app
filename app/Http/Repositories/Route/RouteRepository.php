@@ -47,9 +47,10 @@ class RouteRepository implements RouteRepositoryInterface
         } catch (\Exception $e) {
             return null;
         }
-
+        
+        $this->deleteRelatedChildren($id);
+        
         $data = Route::find($id);
-        $this->deleteRelatedChildren($data);
         Route::find($id)->delete();
 
         return $data;
@@ -68,8 +69,9 @@ class RouteRepository implements RouteRepositoryInterface
             return false;
     }
 
-    private function deleteRelatedChildren(Route $route)
+    public function deleteRelatedChildren(int $routeId)
     {
+        $route = Route::find($routeId);
         $flights = $route->flights;
         foreach($flights as $flight) {
 
