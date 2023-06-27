@@ -36,11 +36,7 @@ class CityRepository implements CityRepositoryInterface
 
     public function editCity(array $data, int $id)
     {
-        try {
-            City::findOrFail($id);
-        } catch (\Exception $e) {
-            return null;
-        }
+        City::findOrFail($id);
         
         if($this->isADuplicate($data['name'], $id)) {
             throw new CityExistsException;
