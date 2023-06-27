@@ -3,6 +3,7 @@
 namespace App\Http\Repositories\Route; 
 
 use App\Exceptions\RouteExistsException;
+use App\Exceptions\RouteSameOriginDestination;
 use App\Models\Route; 
 
 use Illuminate\Support\Facades\Log;
@@ -16,25 +17,19 @@ class RouteRepository implements RouteRepositoryInterface
 
     public function createRoute(array $data)
     {
-        if($this->isADuplicate($data['origin_id'], $data['destination_id'])) {
-            throw new RouteExistsException; 
-        } 
+        $this->isADuplicate($data['origin_id'], $data['destination_id']);
+        $this->sameOriginDestination($data['origin_id'], $data['destination_id']);
         
         return Route::create($data);
     }
 
     public function editRoute(array $data, int $id)
     {
-        try {
-            Route::findOrFail($id);
-        } catch (\Exception $e) {
-            return null;
-        }
+        Route::findOrFail($id);
 
-        if($this->isADuplicate($data['origin_id'], $data['destination_id'])) {
-            throw new RouteExistsException; 
-        } 
-
+        $this->isADuplicate($data['origin_id'], $data['destination_id']);
+        $this->sameOriginDestination($data['origin_id'], $data['destination_id']);
+        
         Route::where('id', $id)->update($data);
 
         return Route::find($id);
@@ -42,11 +37,7 @@ class RouteRepository implements RouteRepositoryInterface
 
     public function deleteRoute(int $id)
     {
-        try {
-            Route::findOrFail($id);
-        } catch (\Exception $e) {
-            return null;
-        }
+        Route::findOrFail($id);
         
         $this->deleteRelatedChildren($id);
         
@@ -64,9 +55,15 @@ class RouteRepository implements RouteRepositoryInterface
         ])->first();
 
         if($route) {
-            return true;
+            throw new RouteExistsException; 
         }
-            return false;
+    }
+
+    private function sameOriginDestination(int $originId, int $destinationId)
+    {
+        if($originId === $destinationId) {
+            throw new RouteSameOriginDestination;
+        }
     }
 
     public function deleteRelatedChildren(int $routeId)
