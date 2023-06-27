@@ -73,6 +73,11 @@ class RouteController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = $this->repository->deleteRoute($id);
+
+        if(!$data) {
+            return response()->error('Object not found', ['route' => 'Route does not exists'], 404);
+        }
+            return response()->success('Successfully deleted route', $data);
     }
 }

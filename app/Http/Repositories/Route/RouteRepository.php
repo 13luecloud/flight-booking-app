@@ -40,6 +40,21 @@ class RouteRepository implements RouteRepositoryInterface
         return Route::find($id);
     }
 
+    public function deleteRoute(int $id)
+    {
+        try {
+            Route::findOrFail($id);
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        $data = Route::find($id);
+        $this->deleteRelatedChildren($data);
+        Route::find($id)->delete();
+
+        return $data;
+    }
+
     private function isADuplicate(int $originID, int $destinationID)
     {
         $route = Route::where([
@@ -51,5 +66,21 @@ class RouteRepository implements RouteRepositoryInterface
             return true;
         }
             return false;
+    }
+
+    private function deleteRelatedChildren(Route $route)
+    {
+        $flights = $route->flights;
+        foreach($flights as $flight) {
+
+            $bookings = $flight->bookings;
+            foreach($bookings as $booking) {
+                $booking->tickets()->delete();
+            }
+
+            $flight->bookings()->delete();
+        }
+
+        $route->flights()->delete();
     }
 }

@@ -20,4 +20,9 @@ class Route extends Model
         'origin_id', 
         'destination_id'
     ];
+
+    public function flights()
+    {
+        return $this->hasMany(Flight::class);
+    }
 }

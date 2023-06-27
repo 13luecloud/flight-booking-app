@@ -7,4 +7,5 @@ interface RouteRepositoryInterface
     public function getAllRoutes();
     public function createRoute(array $data);
     public function editRoute(array $data, int $id);
+    public function deleteRoute(int $id);
 }
