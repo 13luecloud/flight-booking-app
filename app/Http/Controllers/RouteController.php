@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Repositories\Route\RouteRepositoryInterface;
+use App\Http\Requests\CreateRouteRequest;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -26,24 +27,14 @@ class RouteController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateRouteRequest $request)
     {
-        //
+        return response()->success('Successfully created route', $this->repository->createRoute($request->validated()));
     }
 
     /**
@@ -58,26 +49,20 @@ class RouteController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CreateRouteRequest $request, $id)
     {
-        //
+        $data = $this->repository->editRoute($request->validated(), $id);
+
+        if(!$data) {
+            return response()->error('Object not found', ['route' => 'Route does not exists'], 404);
+        }
+            return response()->success('Successfully updated route', $data);
     }
 
     /**
@@ -88,6 +73,11 @@ class RouteController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = $this->repository->deleteRoute($id);
+
+        if(!$data) {
+            return response()->error('Object not found', ['route' => 'Route does not exists'], 404);
+        }
+            return response()->success('Successfully deleted route', $data);
     }
 }

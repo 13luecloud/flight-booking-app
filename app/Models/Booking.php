@@ -26,4 +26,14 @@ class Booking extends Model
         'payable',
         'status'
     ];
+
+    public function flight()
+    {
+        return $this->belongsTo(Flight::class);
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
 }
