@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 
@@ -71,11 +70,8 @@ class CityTest extends TestCase
         
         $newName = ['name' => 'New Name'];
 
-        $this->expectException(ModelNotFoundException::class);
         $newCity = $this->repository->editCity($newName, $count+1);
-        // Why is this throwing a green assertion when I don't have any assertions???????? 
-
-        // $this->assertStatus(404);
-        // $this->assertJson($newCity, $strict = false);        
+        
+        $this->assertNull($newCity);      
     }
 }

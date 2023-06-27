@@ -11,6 +11,8 @@ use App\Http\Requests\CreateCityRequest;
 use App\Http\Requests\EditCityRequest;
 use App\Http\Repositories\City\CityRepositoryInterface;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 class CityController extends Controller
 {
     private $repository; 
@@ -62,11 +64,11 @@ class CityController extends Controller
     public function update(EditCityRequest $request, $id)
     {
         $data = $this->repository->editCity($request->validated(), $id);
-        try {
+
+        if(!$data) { 
+            return response()->error('Object not found', ['city' => 'City does not exists'], 404);
+        } 
             return response()->success('Successfully updated city', $data);
-        } catch(Exception $e) {
-            throw $e;
-        }
     }
 
     /**
