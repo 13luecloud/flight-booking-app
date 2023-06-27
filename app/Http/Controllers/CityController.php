@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Exception;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+use App\Http\Requests\CreateCityRequest; 
+use App\Http\Requests\EditCityRequest;
+use App\Http\Repositories\City\CityRepositoryInterface;
+
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+class CityController extends Controller
+{
+    private $repository; 
+    public function __construct(CityRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        return response()->success('Successfully retrieved all cities', $this->repository->getAllCities());
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(CreateCityRequest $request)
+    {
+        $data = $this->repository->createCity($request->validated());
+        return response()->success('Successfully created city', $data);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(EditCityRequest $request, $id)
+    {
+        $data = $this->repository->editCity($request->validated(), $id);
+
+        if(!$data) { 
+            return response()->error('Object not found', ['city' => 'City does not exists'], 404);
+        } 
+            return response()->success('Successfully updated city', $data);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        return response()->success('Successfully deleted City', $this->repository->deleteCity($id));
+    }
+}

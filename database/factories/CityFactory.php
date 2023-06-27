@@ -14,9 +14,11 @@ class CityFactory extends Factory
      */
     public function definition()
     {
+        $city = $this->faker->city(); 
+
         return [
-            'name' => $this->faker->city(),
-            'code' => strtoupper(Str::random(3))
+            'name' => $city,
+            'code' => strtoupper(substr($city, 0, 3))
         ];
     }
 }

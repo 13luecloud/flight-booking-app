@@ -2,8 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\City; 
+
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class RouteFactory extends Factory
 {
@@ -26,7 +27,7 @@ class RouteFactory extends Factory
     {
         $origin = City::inRandomOrder()->first()->id;
         $destination = City::inRandomOrder()->first()->id;
-        
+
         // in case of condition = true
         while($destination === $origin) {
             $destination = City::inRandomOrder()->first()->id;
