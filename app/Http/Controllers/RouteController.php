@@ -55,9 +55,14 @@ class RouteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CreateRouteRequest $request, $id)
     {
-        //
+        $data = $this->repository->editRoute($request->validated(), $id);
+
+        if(!$data) {
+            return response()->error('Object not found', ['route' => 'Route does not exists'], 404);
+        }
+            return response()->success('Successfully updated route', $data);
     }
 
     /**

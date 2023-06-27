@@ -23,6 +23,23 @@ class RouteRepository implements RouteRepositoryInterface
         return Route::create($data);
     }
 
+    public function editRoute(array $data, int $id)
+    {
+        try {
+            Route::findOrFail($id);
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        if($this->isADuplicate($data['origin_id'], $data['destination_id'])) {
+            throw new RouteExistsException; 
+        } 
+
+        Route::where('id', $id)->update($data);
+
+        return Route::find($id);
+    }
+
     private function isADuplicate(int $originID, int $destinationID)
     {
         $route = Route::where([
