@@ -79,6 +79,6 @@ class CityController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return response()->success('Successfully deleted City', $this->repository->deleteCity($id));
     }
 }
