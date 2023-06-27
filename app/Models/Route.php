@@ -17,7 +17,12 @@ class Route extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'origin', 
-        'destination'
+        'origin_id', 
+        'destination_id'
     ];
+
+    public function flights()
+    {
+        return $this->hasMany(Flight::class);
+    }
 }
