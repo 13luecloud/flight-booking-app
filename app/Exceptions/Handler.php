@@ -46,16 +46,16 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->renderable(function (Throwable $e) {
-            if ($e instanceof NotFoundHttpException) {
-                return response()->error(
-                    'Object not found', 
-                    [
-                        'city' => 'Not found'
-                    ],
-                    404
-                );
-            }
-        });
+        // $this->renderable(function (Throwable $e) {
+        //     if ($e instanceof NotFoundHttpException) {
+        //         return response()->error(
+        //             'Object not found', 
+        //             [
+        //                 'city' => 'Not found'
+        //             ],
+        //             404
+        //         );
+        //     }
+        // });
     }
 }
