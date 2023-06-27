@@ -32,7 +32,7 @@ class CreateRouteRequest extends FormRequest
     {
         return [
             'origin_id' => 'required|exists:cities,id', 
-            'destination_id' => 'required|exists:cities,id'
+            'destination_id' => 'required|exists:cities,id|different:origin_id'
         ];
     }
 }

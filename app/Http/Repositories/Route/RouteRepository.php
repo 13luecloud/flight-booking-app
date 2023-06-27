@@ -3,7 +3,6 @@
 namespace App\Http\Repositories\Route; 
 
 use App\Exceptions\RouteExistsException;
-use App\Exceptions\RouteSameOriginDestination;
 use App\Models\Route; 
 
 use Illuminate\Support\Facades\Log;
@@ -18,7 +17,6 @@ class RouteRepository implements RouteRepositoryInterface
     public function createRoute(array $data)
     {
         $this->isADuplicate($data['origin_id'], $data['destination_id']);
-        $this->sameOriginDestination($data['origin_id'], $data['destination_id']);
         
         return Route::create($data);
     }
@@ -28,7 +26,6 @@ class RouteRepository implements RouteRepositoryInterface
         Route::findOrFail($id);
 
         $this->isADuplicate($data['origin_id'], $data['destination_id']);
-        $this->sameOriginDestination($data['origin_id'], $data['destination_id']);
         
         Route::where('id', $id)->update($data);
 
@@ -56,13 +53,6 @@ class RouteRepository implements RouteRepositoryInterface
 
         if($route) {
             throw new RouteExistsException; 
-        }
-    }
-
-    private function sameOriginDestination(int $originId, int $destinationId)
-    {
-        if($originId === $destinationId) {
-            throw new RouteSameOriginDestination;
         }
     }
 

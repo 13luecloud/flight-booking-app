@@ -25,7 +25,7 @@ class RouteTest extends TestCase
         City::factory(5)->create();
     }
 
-    public function test_succeed_get_all_routes()
+    public function test_unit_succeed_get_all_routes()
     {
         Route::factory(5)->create();
 
@@ -37,7 +37,7 @@ class RouteTest extends TestCase
         }       
     }
 
-    public function test_succeed_create_routes()
+    public function test_unit_succeed_create_routes()
     {   // Opted not to use factory because it may generate a duplicate pair of numbers
         $routes = $this->validRoutesData();
 
@@ -56,7 +56,7 @@ class RouteTest extends TestCase
         $this->assertDatabaseCount('routes', 3);
     }
 
-    public function test_succeed_update_route()
+    public function test_unit_succeed_update_route()
     {
         $count = 3;
         Route::factory($count)->create();
@@ -77,7 +77,7 @@ class RouteTest extends TestCase
         $this->assertModelExists($updatedRoute);
     }
 
-    public function test_succeed_delete_route()
+    public function test_unit_succeed_delete_route()
     {
         $routes = Route::factory(5)->create();
 
