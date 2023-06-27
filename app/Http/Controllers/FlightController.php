@@ -2,10 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Repositories\Flight\FlightRepositoryInterface;
+
 use Illuminate\Http\Request;
 
 class FlightController extends Controller
 {
+    private $repository; 
+    public function __construct(FlightRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +21,7 @@ class FlightController extends Controller
      */
     public function index()
     {
-        //
+        return response()->success('Successfully retrieved flights', $this->repository->getAllFlights());
     }
 
 
