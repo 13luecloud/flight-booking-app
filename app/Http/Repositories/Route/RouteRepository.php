@@ -3,6 +3,7 @@
 namespace App\Http\Repositories\Route; 
 
 use App\Exceptions\RouteExistsException;
+use App\Http\Repositories\Flight\FlightRepository;
 use App\Models\Route; 
 
 use Illuminate\Support\Facades\Log;
@@ -36,7 +37,7 @@ class RouteRepository implements RouteRepositoryInterface
     {
         Route::findOrFail($id);
         
-        $this->deleteRelatedChildren($id);
+        $this->deleteRouteRelatedChildren($id);
         
         $data = Route::find($id);
         Route::find($id)->delete();
@@ -56,18 +57,14 @@ class RouteRepository implements RouteRepositoryInterface
         }
     }
 
-    public function deleteRelatedChildren(int $routeId)
+    public function deleteRouteRelatedChildren(int $routeId)
     {
         $route = Route::find($routeId);
+
+        $flightRepo = new FlightRepository;
         $flights = $route->flights;
         foreach($flights as $flight) {
-
-            $bookings = $flight->bookings;
-            foreach($bookings as $booking) {
-                $booking->tickets()->delete();
-            }
-
-            $flight->bookings()->delete();
+            $flightRepo->deleteFlightRelatedChildren($flight->id);
         }
 
         $route->flights()->delete();
