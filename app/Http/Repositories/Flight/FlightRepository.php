@@ -31,6 +31,7 @@ class FlightRepository implements FlightRepositoryInterface
     {
         $flight = Flight::findOrFail($id);
 
+        // String to DateTime
         $data['schedule'] = Carbon::createFromFormat('Y-m-d H:i', $data['schedule']);
         $this->isSameScheduleForRoute($data['route_id'], $data['schedule']);
 
