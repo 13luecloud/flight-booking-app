@@ -21,7 +21,7 @@ class FlightFactory extends Factory
             'capacity' => $capacity, 
             'reserved' => $this->faker->numberBetween(0, $capacity),
             'price' => $this->faker->numberBetween(999, 20001),
-            'schedule'  => $this->faker->dateTime(),
+            'schedule'  => $this->faker->dateTime()->format('Y-m-d H:i'),
         ];
     }
 }

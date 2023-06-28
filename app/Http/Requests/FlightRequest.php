@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
-class CreateRouteRequest extends FormRequest
+class FlightRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,13 +13,7 @@ class CreateRouteRequest extends FormRequest
      */
     public function authorize()
     {
-        $user = Auth::user();
-        if($user->role === 'admin')
-        {
-            return true;
-        }
-        
-        return false;
+        return true;
     }
 
     /**
@@ -31,8 +24,11 @@ class CreateRouteRequest extends FormRequest
     public function rules()
     {
         return [
-            'origin_id' => 'required|exists:cities,id', 
-            'destination_id' => 'required|exists:cities,id'
+            'route_id' => 'required|exists:routes,id',
+            'capacity' => 'required|numeric',
+            'reserved' => 'nullable|numeric|lte:capacity',
+            'price' => 'required|numeric',
+            'schedule' => 'required|date',
         ];
     }
 }

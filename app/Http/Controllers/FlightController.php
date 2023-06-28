@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Repositories\Route\RouteRepositoryInterface;
-use App\Http\Requests\RouteRequest;
+use App\Http\Repositories\Flight\FlightRepositoryInterface;
+use App\Http\Requests\FlightRequest; 
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
-class RouteController extends Controller
+class FlightController extends Controller
 {
     private $repository; 
-    public function __construct(RouteRepositoryInterface $repository)
+    public function __construct(FlightRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
@@ -23,18 +22,19 @@ class RouteController extends Controller
      */
     public function index()
     {
-        return response()->success('Successfully retrieved all routes', $this->repository->getAllRoutes());
+        return response()->success('Successfully retrieved flights', $this->repository->getAllFlights());
     }
+
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\FlightRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(RouteRequest $request)
+    public function store(FlightRequest $request)
     {
-        return response()->success('Successfully created route', $this->repository->createRoute($request->validated()));
+        return response()->success('Successfully created flight', $this->repository->createFlight($request->validated()));
     }
 
     /**
@@ -51,13 +51,13 @@ class RouteController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\FlightRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(RouteRequest $request, $id)
+    public function update(FlightRequest $request, $id)
     {
-        return response()->success('Successfully updated route', $this->repository->editRoute($request->validated(), $id));
+        return response()->success('Successfully updated flight', $this->repository->editFlight($request->validated(), $id));
     }
 
     /**
@@ -68,6 +68,6 @@ class RouteController extends Controller
      */
     public function destroy($id)
     {
-        return response()->success('Successfully deleted route', $this->repository->deleteRoute($id));
+        return response()->success('Successfully deleted flight', $this->repository->deleteFlight($id));
     }
 }

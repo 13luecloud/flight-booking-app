@@ -3,6 +3,7 @@
 namespace App\Http\Repositories\Route; 
 
 use App\Exceptions\RouteExistsException;
+use App\Http\Repositories\Flight\FlightRepository;
 use App\Models\Route; 
 
 use Illuminate\Support\Facades\Log;
@@ -16,25 +17,17 @@ class RouteRepository implements RouteRepositoryInterface
 
     public function createRoute(array $data)
     {
-        if($this->isADuplicate($data['origin_id'], $data['destination_id'])) {
-            throw new RouteExistsException; 
-        } 
+        $this->isADuplicate($data['origin_id'], $data['destination_id']);
         
         return Route::create($data);
     }
 
     public function editRoute(array $data, int $id)
     {
-        try {
-            Route::findOrFail($id);
-        } catch (\Exception $e) {
-            return null;
-        }
+        Route::findOrFail($id);
 
-        if($this->isADuplicate($data['origin_id'], $data['destination_id'])) {
-            throw new RouteExistsException; 
-        } 
-
+        $this->isADuplicate($data['origin_id'], $data['destination_id']);
+        
         Route::where('id', $id)->update($data);
 
         return Route::find($id);
@@ -42,13 +35,9 @@ class RouteRepository implements RouteRepositoryInterface
 
     public function deleteRoute(int $id)
     {
-        try {
-            Route::findOrFail($id);
-        } catch (\Exception $e) {
-            return null;
-        }
+        Route::findOrFail($id);
         
-        $this->deleteRelatedChildren($id);
+        $this->deleteRouteRelatedChildren($id);
         
         $data = Route::find($id);
         Route::find($id)->delete();
@@ -64,23 +53,18 @@ class RouteRepository implements RouteRepositoryInterface
         ])->first();
 
         if($route) {
-            return true;
+            throw new RouteExistsException; 
         }
-            return false;
     }
 
-    public function deleteRelatedChildren(int $routeId)
+    public function deleteRouteRelatedChildren(int $routeId)
     {
         $route = Route::find($routeId);
+
+        $flightRepo = new FlightRepository;
         $flights = $route->flights;
         foreach($flights as $flight) {
-
-            $bookings = $flight->bookings;
-            foreach($bookings as $booking) {
-                $booking->tickets()->delete();
-            }
-
-            $flight->bookings()->delete();
+            $flightRepo->deleteFlightRelatedChildren($flight->id);
         }
 
         $route->flights()->delete();
