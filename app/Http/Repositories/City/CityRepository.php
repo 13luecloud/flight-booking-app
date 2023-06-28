@@ -12,26 +12,15 @@ use Illuminate\Support\Facades\Log;
  
 class CityRepository implements CityRepositoryInterface 
 {
+    public function getAllCities()
+    {
+        return City::all();
+    }
+
     public function createCity(array $data)
     {  
         $data['code'] = $this->generateCode($data['name']);
         return City::create($data);
-    }
-
-    public function deleteCity(int $id)
-    {
-        $routeRepo = new RouteRepository; 
-
-        $routes = Route::where('origin_id', $id)->orWhere('destination_id', $id)->get();
-        foreach($routes as $route) {
-            $routeRepo->deleteRelatedChildren($route->id);
-            Route::find($route->id)->delete();
-        }
-
-        $data = City::find($id);
-        City::find($id)->delete();
-
-        return $data;
     }
 
     public function editCity(array $data, int $id)
@@ -48,9 +37,22 @@ class CityRepository implements CityRepositoryInterface
         return City::find($id);
     }
 
-    public function getAllCities()
+    public function deleteCity(int $id)
     {
-        return City::all();
+        City::findOrFail($id);
+        
+        $routeRepo = new RouteRepository; 
+
+        $routes = Route::where('origin_id', $id)->orWhere('destination_id', $id)->get();
+        foreach($routes as $route) {
+            $routeRepo->deleteRelatedChildren($route->id);
+            Route::find($route->id)->delete();
+        }
+
+        $data = City::find($id);
+        City::find($id)->delete();
+
+        return $data;
     }
 
     private function isADuplicate(String $city, int $id)
