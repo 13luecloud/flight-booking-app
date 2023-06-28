@@ -34,9 +34,9 @@ class FlightRepository implements FlightRepositoryInterface
         return $data;
     }
 
-    private function deleteFlightRelatedChildren(int $id)
+    public function deleteFlightRelatedChildren(int $flightId)
     {
-        $flight = Flight::find($id);
+        $flight = Flight::find($flightId);
         
         $bookings = $flight->bookings;
         foreach($bookings as $booking) {

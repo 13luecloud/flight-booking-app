@@ -25,7 +25,7 @@ class RouteFeatureTest extends TestCase
         $user = User::factory(1)->create(['role' => 'admin']);
         $this->user = User::where('role', 'admin')->first();
         
-        $this->cities = City::factory(5)->create();
+        $this->cities = City::factory(4)->create();
     }
 
     public function test_feature_succeed_get_all_routes()
