@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Route extends Model
+class Ticket extends Model
 {
-    use HasFactory; 
+    use HasFactory;
     use SoftDeletes;
+
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     /**
      * The attributes that are mass assignable.
@@ -17,12 +20,13 @@ class Route extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'origin_id', 
-        'destination_id'
+        'id',
+        'booking_id',
+        'passenger'
     ];
 
-    public function flights()
+    public function booking()
     {
-        return $this->hasMany(Flight::class);
+        return $this->belongsTo(Booking::class);
     }
 }

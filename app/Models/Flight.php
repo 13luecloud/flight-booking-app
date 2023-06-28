@@ -23,4 +23,14 @@ class Flight extends Model
         'price',
         'schedule'
     ];
+
+    public function route()
+    {
+        return $this->belongsTo(Route::class);
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }
