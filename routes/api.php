@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\FlightController;
+use App\Http\Controllers\BookingController;
 
 /*
 |--------------------------------------------------------------------------
