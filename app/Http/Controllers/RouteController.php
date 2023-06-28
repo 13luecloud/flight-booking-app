@@ -57,12 +57,7 @@ class RouteController extends Controller
      */
     public function update(RouteRequest $request, $id)
     {
-        $data = $this->repository->editRoute($request->validated(), $id);
-
-        if(!$data) {
-            return response()->error('Object not found', ['route' => 'Route does not exists'], 404);
-        }
-            return response()->success('Successfully updated route', $data);
+        return response()->success('Successfully updated route', $this->repository->editRoute($request->validated(), $id));
     }
 
     /**
@@ -73,11 +68,6 @@ class RouteController extends Controller
      */
     public function destroy($id)
     {
-        $data = $this->repository->deleteRoute($id);
-
-        if(!$data) {
-            return response()->error('Object not found', ['route' => 'Route does not exists'], 404);
-        }
-            return response()->success('Successfully deleted route', $data);
+        return response()->success('Successfully deleted route', $this->repository->deleteRoute($id));
     }
 }

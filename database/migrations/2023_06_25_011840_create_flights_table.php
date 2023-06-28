@@ -17,8 +17,8 @@ class CreateFlightsTable extends Migration
             $table->id();
             $table->foreignId('route_id')->constrained();
             $table->integer('capacity');
-            $table->integer('reserved');
-            $table->integer('price')->default(0);
+            $table->integer('reserved')->default(0);
+            $table->integer('price');
             $table->dateTime('schedule');
             $table->timestamps();
             $table->softDeletes();
