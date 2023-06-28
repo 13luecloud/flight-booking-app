@@ -68,6 +68,6 @@ class FlightController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return response()->success('Successfully deleted flight', $this->repository->deleteFlight($id));
     }
 }
