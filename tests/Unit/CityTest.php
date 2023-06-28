@@ -22,6 +22,23 @@ class CityTest extends TestCase
         $this->repository = app(CityRepository::class);
     }
 
+    public function test_unit_succeeds_get_all_cities()
+    {
+        $createdCities = City::factory(3)->create();
+        $fetchedCities = $this->repository->getAllCities();
+
+        $this->assertNotEmpty($fetchedCities);
+        $this->assertDatabaseCount('cities', 3); 
+
+        for($i=0; $i < 3; $i++) {
+            $this->assertModelExists($createdCities[$i]);
+
+            $this->assertEquals($createdCities[$i]->id, $fetchedCities[$i]->id);
+            $this->assertEquals($createdCities[$i]->name, $fetchedCities[$i]->name);
+            $this->assertEquals($createdCities[$i]->code, $fetchedCities[$i]->code);
+        }
+    }
+
     public function test_unit_succeeds_create_cities()
     {
         $count = 3;
@@ -45,23 +62,6 @@ class CityTest extends TestCase
         $this->assertDatabaseCount('cities', $count);
     }
 
-    public function test_unit_succeeds_get_all_cities()
-    {
-        $createdCities = City::factory(3)->create();
-        $fetchedCities = $this->repository->getAllCities();
-
-        $this->assertNotEmpty($fetchedCities);
-        $this->assertDatabaseCount('cities', 3); 
-
-        for($i=0; $i < 3; $i++) {
-            $this->assertModelExists($createdCities[$i]);
-
-            $this->assertEquals($createdCities[$i]->id, $fetchedCities[$i]->id);
-            $this->assertEquals($createdCities[$i]->name, $fetchedCities[$i]->name);
-            $this->assertEquals($createdCities[$i]->code, $fetchedCities[$i]->code);
-        }
-    }
-
     public function test_unit_succeeds_edit_city()
     {
         $createdCities = City::factory(2)->create();
@@ -77,4 +77,18 @@ class CityTest extends TestCase
         $this->assertModelExists($newCity);
     }
 
+    public function test_unit_succeeds_delete_city()
+    {
+        $createdCity = City::factory(1)->create();
+        $cityId = $createdCity[0]->id;
+
+        $this->assertDatabaseCount('cities', 1);
+
+        $deletedCity = $this->repository->deleteCity($cityId);
+
+        $this->assertDatabaseCount('cities', 1);
+        $this->assertEquals($deletedCity->id, $cityId);
+        $this->assertSoftDeleted($createdCity[0]);
+
+    }
 }
