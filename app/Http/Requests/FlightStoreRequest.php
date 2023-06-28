@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateOrEditFlightRequest extends FormRequest
+class FlightStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,13 +13,7 @@ class CreateOrEditFlightRequest extends FormRequest
      */
     public function authorize()
     {
-        $user = Auth::user();
-        if($user->role === 'admin')
-        {
-            return true;
-        }
-        
-        return false;
+        return true;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Repositories\Flight\FlightRepositoryInterface;
+use App\Http\Requests\FlightStoreRequest; 
 
 use Illuminate\Http\Request;
 
@@ -28,12 +29,12 @@ class FlightController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\FlightStoreRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(FlightStoreRequest $request)
     {
-        //
+        return response()->success('Successfully created flight', $this->repository->createFlight($request->validated()));
     }
 
     /**
