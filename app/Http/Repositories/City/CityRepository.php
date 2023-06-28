@@ -39,6 +39,8 @@ class CityRepository implements CityRepositoryInterface
 
     public function deleteCity(int $id)
     {
+        City::findOrFail($id);
+        
         $routeRepo = new RouteRepository; 
 
         $routes = Route::where('origin_id', $id)->orWhere('destination_id', $id)->get();

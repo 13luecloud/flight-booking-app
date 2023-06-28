@@ -28,43 +28,69 @@ class CityFeatureTest extends TestCase
     public function test_feature_succeeds_get_all_cities()
     {
         $response = $this->actingAs($this->user)->get("/api/admin/city");
-
+        
+        $this->assertDatabaseCount('cities', 0);
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'success', 
             'message', 
             'data'
         ]);
+        $responseBody = $response->json();
+        $this->assertEquals($responseBody['data'], []);
+
+        City::factory(3)->create();
+
+        $response = $this->actingAs($this->user)->get("/api/admin/city");
+
+        $this->assertDatabaseCount('cities', 3);
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success', 
+            'message', 
+            'data'
+        ]);
+        $responseBody = $response->json();
+        $this->assertCount(3, $responseBody['data']);
     }
 
     public function test_feature_succeed_create_city()
     {
-        $data = $this->valid_city_data();
+        $cities = City::factory(3)->make();
 
-        foreach($data as $city) {
-            $response = $this->actingAs($this->user)->post("/api/admin/city", $city);
+        $this->assertDatabaseCount('cities', 0);
+
+        foreach($cities as $city) {
+            $response = $this->actingAs($this->user)->post("/api/admin/city", $city->toArray());
 
             $response->assertStatus(200);
-            $response->assertJsonCount(3);
             $response->assertJsonStructure([
                 'success', 
                 'message', 
                 'data'
             ]);
         }
+
+        $this->assertDatabaseCount('cities', 3);
     }
 
     public function test_feature_fail_create_city()
     {
-        $data = $this->invalid_city_data();
-        
-        $response = $this->actingAs($this->user)->post("/api/admin/city", $data[0]);
+        $city = City::factory(1)->make([
+            'name' => 'Muñoz'
+        ]);
+
+        $response = $this->actingAs($this->user)->post("/api/admin/city", $city[0]->toArray());
         $response->assertStatus(500);
+        $this->assertDatabaseCount('cities', 0);
+
+        $city = City::factory(1)->make([
+            'name' => 'WithNumbers1233'
+        ]);
 
         $this->expectException(ValidationException::class);
-        $response = $this->actingAs($this->user)->post("/api/admin/city", $data[1]);
+        $response = $this->actingAs($this->user)->post("/api/admin/city", $city[0]->toArray());
         $response->assertStatus(302);
-        $response->assertJsonCount(3);
         $response->assertJsonStructure([
             'success', 
             'message', 
@@ -74,113 +100,110 @@ class CityFeatureTest extends TestCase
 
     public function test_feature_succeed_edit_city()
     {
-        $data = $this->valid_city_data();
-        $count = count($data);
+        City::factory(5)->create();
 
-        foreach($data as $city) {
-            $response = $this->actingAs($this->user)->post("/api/admin/city", $city);
-        }
-
-        $this->assertDatabaseCount('cities', $count);
+        $this->assertDatabaseCount('cities', 5);
         
         $city = City::first();
         $newCity = ['name' => 'New City'];
         $response = $this->actingAs($this->user)->put("/api/admin/city/{$city->id}", $newCity);
         $response->assertStatus(200);
-        $response->assertJsonCount(3);
         $response->assertJsonStructure([
             'success', 
             'message', 
             'data'
         ]);
+        $this->assertDatabaseHas('cities', [
+            'name' => $newCity['name']
+        ]);
 
-        $city = City::where('name', 'Cebu')->first();
-        $newCity = ['name' => 'CEBu'];
+        $newCity = ['name' => strtoupper($newCity['name'])];
         $response = $this->actingAs($this->user)->put("/api/admin/city/{$city->id}", $newCity);
         $response->assertStatus(200);
-        $response->assertJsonCount(3);
         $response->assertJsonStructure([
             'success', 
             'message', 
             'data'
+        ]);
+        $this->assertDatabaseHas('cities', [
+            'name' => strtoupper($newCity['name'])
         ]);
     }
 
     public function test_feature_fail_edit_city_city_exists()
     {
-        $data = $this->valid_city_data();
-        $count = count($data);
+        City::factory(5)->create();
 
-        foreach($data as $city) {
-            $response = $this->actingAs($this->user)->post("/api/admin/city", $city);
-        }
+        $this->assertDatabaseCount('cities', 5);
 
-        $this->assertDatabaseCount('cities', $count);
+        $city = City::first();
+        $cityId = ($city->id) + 1;
 
-        $city = City::where('name', '!=', 'Cebu')->first();
+        $newCity = ['name' => $city->name];
+        $response = $this->actingAs($this->user)->put("/api/admin/city/{$cityId}", $newCity);
 
-        $newCity = ['name' => 'Cebu'];
-        $response = $this->actingAs($this->user)->put("/api/admin/city/{$city->id}", $newCity);
         $response->assertStatus(422);
         $response->assertJsonStructure([
             'success', 
             'message', 
             'errors'
         ]);
+
+        $responseBody = $response->json();
+        $this->assertEquals($responseBody['errors']['city'], 'City already exists');
     }
 
     public function test_function_fail_edit_city_object_does_not_exist()
     {
-        $data = $this->valid_city_data();
-        $count = count($data);
+        City::factory(3)->create();
 
-        foreach($data as $city) {
-            $response = $this->actingAs($this->user)->post("/api/admin/city", $city);
-        }
+        $this->assertDatabaseCount('cities', 3);
 
-        $this->assertDatabaseCount('cities', $count);
-
-        $count++;
         $newCity = ['name' => 'New City'];
-        $response = $this->actingAs($this->user)->put("/api/admin/city/{$count}", $newCity);
+        $response = $this->actingAs($this->user)->put("/api/admin/city/4", $newCity);
+
         $response->assertStatus(404);
         $response->assertJsonStructure([
             'success', 
             'message', 
             'errors'
         ]);
+        $this->assertDatabaseMissing('cities', [
+            'name' => 'New City'
+        ]);
     }
 
-    private function valid_city_data()
+    public function test_function_succeed_delete_city()
     {
-        return $data = [
-          [
-            'name' => 'Cagayan de Oro',
-          ],
-          [
-            'name' => 'Cebu',
-          ],
-          [
-            'name' => 'Manila',
-          ],
-          [
-            'name' => 'Baguio',
-          ],
-          [
-            'name' => 'Iligan',
-          ]
-        ];
+        $city = City::factory(1)->create();
+
+        $this->assertDatabaseCount('cities', 1);
+
+        $response = $this->actingAs($this->user)->delete("/api/admin/city/{$city[0]->id}");
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success', 
+            'message', 
+            'data'
+        ]);
+        $this->assertSoftDeleted($city[0]);
+        $this->assertDatabaseCount('cities', 1);
     }
 
-    private function invalid_city_data()
+    public function test_function_fail_delete_city_object_does_not_exist()
     {
-        return $data = [
-            [
-                'name' => 'Muñoz' 
-            ],
-            [
-                'name' => 'WithNumbers123'
-            ]
-        ];
+        City::factory(3)->create();
+
+        $this->assertDatabaseCount('cities', 3);
+
+        $response = $this->actingAs($this->user)->delete("/api/admin/city/4");
+
+        $response->assertStatus(404);
+        $response->assertJsonStructure([
+            'success', 
+            'message', 
+            'errors'
+        ]);
     }
 }
