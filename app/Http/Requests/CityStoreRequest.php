@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Http\FormRequest;
 
-class CreateRouteRequest extends FormRequest
+class CityStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,8 +31,7 @@ class CreateRouteRequest extends FormRequest
     public function rules()
     {
         return [
-            'origin_id' => 'required|exists:cities,id', 
-            'destination_id' => 'required|exists:cities,id|different:origin_id'
+            'name' => 'required|regex:/^[\pL\s]+$/u|unique:cities,name',
         ];
     }
 }

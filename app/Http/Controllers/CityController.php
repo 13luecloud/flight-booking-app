@@ -7,8 +7,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-use App\Http\Requests\CreateCityRequest; 
-use App\Http\Requests\EditCityRequest;
+use App\Http\Requests\CityStoreRequest; 
+use App\Http\Requests\CityUpdateRequest;
 use App\Http\Repositories\City\CityRepositoryInterface;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -37,7 +37,7 @@ class CityController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateCityRequest $request)
+    public function store(CityStoreRequest $request)
     {
         $data = $this->repository->createCity($request->validated());
         return response()->success('Successfully created city', $data);
@@ -61,7 +61,7 @@ class CityController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(EditCityRequest $request, $id)
+    public function update(CityUpdateRequest $request, $id)
     {
         $data = $this->repository->editCity($request->validated(), $id);
 
