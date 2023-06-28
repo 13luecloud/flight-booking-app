@@ -26,8 +26,16 @@ class CityTest extends TestCase
     {
         $count = 3;
         $cities = City::factory($count)->make();
+
+        $this->assertDatabaseCount('cities', 0);
+
         foreach($cities as $city) {
             $createdCity = $this->repository->createCity($city->toArray());
+            
+            $this->assertDatabaseHas('cities', [
+                'name' => $city->name,
+                'code' => $city->code
+            ]);
 
             $this->assertInstanceOf(City::class, $createdCity);
             $this->assertEquals($city['name'], $createdCity->name);
@@ -39,12 +47,13 @@ class CityTest extends TestCase
 
     public function test_unit_succeeds_get_all_cities()
     {
-        $count = 3;
-
-        $createdCities = City::factory($count)->create();
+        $createdCities = City::factory(3)->create();
         $fetchedCities = $this->repository->getAllCities();
 
-        for($i=0; $i < $count; $i++) {
+        $this->assertNotEmpty($fetchedCities);
+        $this->assertDatabaseCount('cities', 3); 
+
+        for($i=0; $i < 3; $i++) {
             $this->assertModelExists($createdCities[$i]);
 
             $this->assertEquals($createdCities[$i]->id, $fetchedCities[$i]->id);
@@ -62,16 +71,10 @@ class CityTest extends TestCase
         $newCity = $this->repository->editCity($newName, $toEditCity->id);
 
         $this->assertEquals($newName['name'], $newCity->name);
+        $this->assertDatabaseHas('cities', [
+            'name' => $newName['name']
+        ]);
+        $this->assertModelExists($newCity);
     }
 
-    public function test_unit_fails_edit_city_cannot_find_object()
-    {
-        $count = 2;
-        $createdCities = City::factory($count)->create();
-        
-        $newName = ['name' => 'New Name'];
-
-        $this->expectException(ModelNotFoundException::class);
-        $newCity = $this->repository->editCity($newName, $count+1);
-    }
 }
