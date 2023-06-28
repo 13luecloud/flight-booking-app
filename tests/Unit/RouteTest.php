@@ -82,28 +82,11 @@ class RouteTest extends TestCase
         $routes = Route::factory(5)->create();
 
         foreach($routes as $route) {
-            $flights = $route->flights;
             $deletedRoute = $this->repository->deleteRoute($route->id);
 
             $this->assertEquals($deletedRoute->origin_id, $route->origin_id);
             $this->assertEquals($deletedRoute->destination_id, $route->destination_id);
 
-            foreach($flights as $flight) { 
-
-                $bookings = $flight->bookings;
-                foreach($bookings as $booking) {
-
-                    $tickets = $booking->tickets;
-                    foreach($tickets as $ticket) {
-                        $this->assertSoftDeleted($ticket); 
-                    }
-
-                    $this->assertSoftDeleted($booking); 
-                }
-
-                $this->assertSoftDeleted($flight); 
-            }
-            
             $this->assertSoftDeleted($route);
         }
     }

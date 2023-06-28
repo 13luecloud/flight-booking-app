@@ -63,12 +63,7 @@ class CityController extends Controller
      */
     public function update(CityUpdateRequest $request, $id)
     {
-        $data = $this->repository->editCity($request->validated(), $id);
-
-        if(!$data) { 
-            return response()->error('Object not found', ['city' => 'City does not exists'], 404);
-        } 
-            return response()->success('Successfully updated city', $data);
+        return response()->success('Successfully updated city', $this->repository->editCity($request->validated(), $id));
     }
 
     /**
