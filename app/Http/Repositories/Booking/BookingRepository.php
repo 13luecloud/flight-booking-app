@@ -26,7 +26,9 @@ class BookingRepository implements BookingRepositoryInterface
     public function getAllUserBookings()
     {
         $user = Auth::user();
-        return $user->bookings;
+        $bookings = Booking::where('user_id', $user->id)->get();
+        
+        return $bookings;
     }
 
     public function createBooking(array $data)
@@ -40,8 +42,7 @@ class BookingRepository implements BookingRepositoryInterface
 
         $user = Auth::user();
         $flight = Flight::find($data['flight_id']);
-        $ticket = new TicketRepository;
-        
+               
         $this->canAccommodatePassengers($flight, $data['passengers']);
         $this->updateFlightReserved($flight, $data['passengers']);
 
@@ -53,6 +54,7 @@ class BookingRepository implements BookingRepositoryInterface
         $booking['status'] = 'unpaid';
         Booking::create($booking);
 
+        $ticket = new TicketRepository;
         $ticket->createTickets($data['passengers'], $booking['id']);
 
         if($this->sendMail) {

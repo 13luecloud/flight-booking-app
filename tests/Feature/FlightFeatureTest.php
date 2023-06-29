@@ -23,16 +23,14 @@ class FlightFeatureTest extends TestCase
     use RefreshDatabase; 
 
     private User $admin;
-    private int $cityCount = 3;
-    private int $routeCount = 3;
     public function setUp(): void
     {
         parent::setUp();
         $admin = User::factory(1)->create(['role' => 'admin']);
         $this->admin = User::where('role', 'admin')->first();
 
-        City::factory($this->cityCount)->create();
-        Route::factory($this->routeCount)->create();
+        City::factory(4)->create();
+        Route::factory(4)->create();
     }
 
     public function test_feature_succeed_client_get_all_flights()
@@ -276,20 +274,20 @@ class FlightFeatureTest extends TestCase
     public function test_feature_fail_admin_edit_flight_capacity_less_than_currently_reserved()
     {
         User::factory(5)->create();
-
+        
         $flight = Flight::factory(1)->create([
             'capacity' => 150,
-            'reserved' => 100,
+            'reserved' => 100
         ]);
         $flightId = $flight[0]->id;
-        $passengers = rand(1, $flight[0]->capacity);
+        $passengers = rand(1, $flight[0]->reserved);
 
         Booking::factory(1)->create([
             'flight_id' => $flightId,
             'payable'   => $passengers * $flight[0]->price
         ]);
 
-        $newCapacity = rand(1, $passengers--);
+        $newCapacity = rand(1, $passengers-=2);
         $newFlight = Flight::factory(1)->make([
             'capacity' => $newCapacity, 
             'reserved' => $newCapacity--,
@@ -323,17 +321,18 @@ class FlightFeatureTest extends TestCase
 
         $flight = Flight::factory(1)->create([
             'capacity' => 200,
-            'reserved' => 150,
+            'reserved' => 50,
         ]);
         $flightId = $flight[0]->id;
-        $passengers = rand(1, $flight[0]->capacity);
-        
+        $passengers = rand(1, $flight[0]->reserved);
+        log::info($passengers);
         Booking::factory(1)->create([
             'flight_id' => $flightId,
             'payable'   => $passengers * $flight[0]->price
         ]);
 
-        $newReserved = rand(1, $passengers);
+        $newReserved = rand(1, $passengers-=2);
+        log::info($newReserved);
         $newFlight = Flight::factory(1)->make([
             'capacity' => $flight[0]->capacity, 
             'reserved' => $newReserved,
