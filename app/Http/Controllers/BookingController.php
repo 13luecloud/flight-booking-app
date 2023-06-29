@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Repositories\Booking\BookingRepositoryInterface; 
+use App\Http\Requests\BookingEditRequest;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -50,13 +51,13 @@ class BookingController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\BookingEditRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BookingEditRequest $request, $id)
     {
-        //
+        return response()->success('Successfully edited booking', $this->repository->editBooking($request->validated(), $id));
     }
 
     /**
@@ -68,6 +69,6 @@ class BookingController extends Controller
     public function destroy($id)
     {
         log::info($id);
-        return response()->success('Booking has been successfully deleted', $this->repository->deleteBooking($id));
+        return response()->success('Successfully deleted booking', $this->repository->deleteBooking($id));
     }
 }

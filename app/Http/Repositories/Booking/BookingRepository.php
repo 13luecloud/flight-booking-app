@@ -3,6 +3,7 @@
 namespace App\Http\Repositories\Booking;
 
 use App\Models\Booking; 
+use App\Models\Flight;
 
 use Illuminate\Support\Facades\Log;
 
@@ -32,13 +33,28 @@ class BookingRepository implements BookingRepositoryInterface
         **/
     }
 
-    public function editBooking()
+    public function editBooking(array $data, String $id)
     {
         /**
          * User cannot edit booking 
-         * Admin cannot change the user_id and the payables (affects the number of passengers booked for that booking) only 
-         * If flight_id has changed, recalculate payable and turn status into unpaid(?) 
+         * Admin cannot change:
+         * user_id - Cannot changed who booked the booking
+         * payables - Affects the number of passengers accounted for
+         * If flight_id has changed, recalculate payable
         **/
+
+        $booking = Booking::findOrFail($id);
+
+        if($booking->flight_id !== $data['flight_id']) {
+            log::info("In-if");
+            $this->updatePayable($booking->flight_id, $data['flight_id'], $booking->id);
+            $booking->flight_id = $data['flight_id'];
+        }
+
+        $booking->status = $data['status'];
+        $booking->save();
+
+        return Booking::find($id);
     }
 
     public function deleteBooking(String $id)
@@ -55,6 +71,20 @@ class BookingRepository implements BookingRepositoryInterface
         $booking->delete();
 
         return $booking;
+    }
+
+    public function updatePayable(int $oldFlightId, int $newFlightId, String $bookingId)
+    {
+        $oldFlight = Flight::find($oldFlightId);
+        $newFlight = Flight::find($newFlightId);
+        $booking = Booking::find($bookingId);
+
+        $passengers = $booking->payable / $oldFlight->price;
+        log::info($passengers);
+        $booking->payable = $passengers * $newFlight->price;
+        log::info($booking->payable);
+
+        $booking->save();
     }
 
     public function deleteBookingRelatedTickets(String $bookingId)

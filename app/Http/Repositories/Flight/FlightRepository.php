@@ -101,9 +101,7 @@ class FlightRepository implements FlightRepositoryInterface
             $bookings = $flight->bookings;
             foreach($bookings as $booking) {
                 $reservations = $booking->payable / $oldPrice;
-                log::info("Reservations: " . $reservations);
                 $booking->payable = $reservations * $newPrice;
-                log::info("New payable: " . $booking->payable); 
 
                 $booking->save();
             }
