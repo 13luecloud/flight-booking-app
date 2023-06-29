@@ -26,6 +26,11 @@ class BookingController extends Controller
         //
     }
 
+    public function indexUserBookings()
+    {
+        return response()->success('Successfully retrieved all user bookings', $this->repository->getAllUserBookings());
+    }
+
     /**
      * Store a newly created resource in storage.
      *

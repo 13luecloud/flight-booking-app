@@ -38,4 +38,9 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
         Route::apiResource('flight', FlightController::class)->except(['index']);
         Route::apiResource('booking', BookingController::class)->except(['store']);
     });
+
+    Route::group(['middleware' => ['role:client']], function(){
+        Route::apiResource('booking', BookingController::class)->only(['store']);
+        Route::get('/booking', [BookingController::class, 'indexUserBookings']);
+    });
 });

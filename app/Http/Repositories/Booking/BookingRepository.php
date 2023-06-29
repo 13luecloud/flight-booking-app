@@ -5,6 +5,7 @@ namespace App\Http\Repositories\Booking;
 use App\Models\Booking; 
 use App\Models\Flight;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class BookingRepository implements BookingRepositoryInterface
@@ -19,6 +20,12 @@ class BookingRepository implements BookingRepositoryInterface
          * Auth in repository so no ID needs to be passed 
          * Consider using different methods for client and admin for less chances of getting entangled together
         **/
+    }
+
+    public function getAllUserBookings()
+    {
+        $user = Auth::user();
+        return $user->bookings;
     }
 
     public function createBooking()
