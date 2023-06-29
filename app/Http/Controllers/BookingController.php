@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Repositories\Booking\BookingRepositoryInterface; 
+use App\Http\Requests\BookingCreateRequest;
 use App\Http\Requests\BookingEditRequest;
 
 use Illuminate\Http\Request;
@@ -37,9 +38,10 @@ class BookingController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BookingCreateRequest $request)
     {
-        //
+        log::info($request);
+        return response()->success('Successfully created booking', $this->repository->createBooking($request->validated()));
     }
 
     /**

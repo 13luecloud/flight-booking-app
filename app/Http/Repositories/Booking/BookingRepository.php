@@ -2,9 +2,12 @@
 
 namespace App\Http\Repositories\Booking;
 
+use App\Exceptions\BookingPassengersGreaterThanCapacity;
+use App\Http\Repositories\Ticket\TicketRepository;
 use App\Models\Booking; 
 use App\Models\Flight;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -21,16 +24,33 @@ class BookingRepository implements BookingRepositoryInterface
         return $user->bookings;
     }
 
-    public function createBooking()
+    public function createBooking(array $data)
     {
         /**
-         * Initial plan: 
-         * Create Booking first, then the tickets 
-         * Required values => flight_id, user_id, payable, status (default: unpaid)
-         * Return created booking
-         * Admin probably can't create a booking, since they're the admin. They need to create a client accont. 
-         * If booking is created, send email
+         * Client can create booking for X passengers 
+         * Booking sales are final and irrevocable 
+         * Booking cannot be pushed if (flight's reserved + booking passengers) > flight's capacity
+         * Admin cannot create booking, they need a client account  
         **/
+
+        $user = Auth::user();
+        $flight = Flight::find($data['flight_id']);
+        $ticket = new TicketRepository;
+        
+        $this->canAccommodatePassengers($flight, $data['passengers']);
+        $this->updateFlightReserved($flight, $data['passengers']);
+
+        $booking = [];
+        $booking['id'] = $this->generateBookingId();
+        $booking['flight_id'] = $data['flight_id'];
+        $booking['user_id'] = $user->id;
+        $booking['payable'] = $this->calculatePayable($flight, $data['passengers']);
+        $booking['status'] = 'unpaid';
+        Booking::create($booking);
+
+        $ticket->createTickets($data['passengers'], $booking['id']);
+
+        return Booking::find($booking['id']);
     }
 
     public function editBooking(array $data, String $id)
@@ -46,7 +66,6 @@ class BookingRepository implements BookingRepositoryInterface
         $booking = Booking::findOrFail($id);
 
         if($booking->flight_id !== $data['flight_id']) {
-            log::info("In-if");
             $this->updatePayable($booking->flight_id, $data['flight_id'], $booking->id);
             $booking->flight_id = $data['flight_id'];
         }
@@ -73,21 +92,51 @@ class BookingRepository implements BookingRepositoryInterface
         return $booking;
     }
 
-    public function updatePayable(int $oldFlightId, int $newFlightId, String $bookingId)
+    private function canAccommodatePassengers(Flight $flight, array $passengers)
+    {
+        $passengers = count($passengers);
+        if( ($flight->reserved + $passengers) > $flight->capacity ) {
+            throw new BookingPassengersGreaterThanCapacity;
+        }
+    }
+
+    private function generateBookingId()
+    {
+        $bookingId = 'B' . strtoupper(Str::random(8));
+        $hasDuplicate = Booking::find($bookingId);
+
+        while($hasDuplicate) {
+            $bookingId = 'B' . strtoupper(Str::random(8));
+            $hasDuplicate = Booking::find($bookingId);
+        }
+
+        return $bookingId;
+    }
+
+    private function calculatePayable(Flight $flight, array $passengers)
+    {
+        return $flight->price * count($passengers);
+    }
+
+    private function updatePayable(int $oldFlightId, int $newFlightId, String $bookingId)
     {
         $oldFlight = Flight::find($oldFlightId);
         $newFlight = Flight::find($newFlightId);
         $booking = Booking::find($bookingId);
 
         $passengers = $booking->payable / $oldFlight->price;
-        log::info($passengers);
         $booking->payable = $passengers * $newFlight->price;
-        log::info($booking->payable);
 
         $booking->save();
     }
 
-    public function deleteBookingRelatedTickets(String $bookingId)
+    private function updateFlightReserved(Flight $flight, array $passengers)
+    {
+        $flight->reserved = $flight->reserved + count($passengers);
+        $flight->save();
+    }
+
+    private function deleteBookingRelatedTickets(String $bookingId)
     {
         $booking = Booking::find($bookingId);
         $booking->tickets()->delete();
