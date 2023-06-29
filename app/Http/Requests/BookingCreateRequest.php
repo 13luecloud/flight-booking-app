@@ -32,7 +32,7 @@ class BookingCreateRequest extends FormRequest
     {
         return [
             'flight_id' => 'required|exists:flights,id',
-            'passengers' => 'required'
+            'passengers' => 'required|array'
         ];
     }
 }
