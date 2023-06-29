@@ -60,11 +60,6 @@ class FlightRepository implements FlightRepositoryInterface
     public function deleteFlightRelatedChildren(int $flightId)
     {
         $flight = Flight::find($flightId);
-        
-        $bookings = $flight->bookings;
-        foreach($bookings as $booking) {
-            $booking->tickets()->delete();
-        }
         $flight->bookings()->delete();
     }
 

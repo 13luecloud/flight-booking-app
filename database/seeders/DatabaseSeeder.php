@@ -8,7 +8,6 @@ use App\Models\City;
 use App\Models\Route;
 use App\Models\Flight;
 use App\Models\Booking;
-use App\Models\Ticket;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,9 +24,5 @@ class DatabaseSeeder extends Seeder
         Route::factory(5)->create();
         Flight::factory(7)->create();
         Booking::factory(5)->create();
-       
-        $this->call([
-            TicketSeeder::class,
-        ]);
     }
 }
