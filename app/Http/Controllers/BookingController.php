@@ -23,7 +23,7 @@ class BookingController extends Controller
      */
     public function index()
     {
-        //
+        return response()->success('Successfully retrieved all bookings', $this->repository->getAllBookings());
     }
 
     public function indexUserBookings()

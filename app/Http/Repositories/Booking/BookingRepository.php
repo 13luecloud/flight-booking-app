@@ -12,14 +12,7 @@ class BookingRepository implements BookingRepositoryInterface
 {
     public function getAllBookings()
     {
-        /**
-         * Initial plan: 
-         * If client, only get the bookings for that client
-         * If admin, get all bookings 
-         * Route for client is different from admin
-         * Auth in repository so no ID needs to be passed 
-         * Consider using different methods for client and admin for less chances of getting entangled together
-        **/
+        return Booking::all();
     }
 
     public function getAllUserBookings()

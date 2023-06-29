@@ -40,7 +40,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     });
 
     Route::group(['middleware' => ['role:client']], function(){
-        Route::apiResource('booking', BookingController::class)->only(['store']);
         Route::get('/booking', [BookingController::class, 'indexUserBookings']);
+        Route::apiResource('booking', BookingController::class)->only(['store']);
     });
 });
