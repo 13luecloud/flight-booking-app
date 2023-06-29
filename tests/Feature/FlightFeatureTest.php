@@ -327,7 +327,7 @@ class FlightFeatureTest extends TestCase
         ]);
         $flightId = $flight[0]->id;
         $passengers = rand(1, $flight[0]->capacity);
-        log::info($passengers);
+        
         Booking::factory(1)->create([
             'flight_id' => $flightId,
             'payable'   => $passengers * $flight[0]->price

@@ -47,14 +47,13 @@ class FlightRepository implements FlightRepositoryInterface
 
     public function deleteFlight(int $id)
     {
-        Flight::findOrFail($id);
+        $booking = Flight::findOrFail($id);
 
         $this->deleteFlightRelatedChildren($id);
 
-        $data = Flight::find($id);
-        $data->delete();
+        $booking->delete();
 
-        return $data;
+        return $booking;
     }
 
     public function deleteFlightRelatedChildren(int $flightId)

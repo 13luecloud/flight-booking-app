@@ -4,6 +4,8 @@ namespace App\Http\Repositories\Booking;
 
 use App\Models\Booking; 
 
+use Illuminate\Support\Facades\Log;
+
 class BookingRepository implements BookingRepositoryInterface
 {
     public function getAllBookings()
@@ -34,16 +36,30 @@ class BookingRepository implements BookingRepositoryInterface
     {
         /**
          * User cannot edit booking 
-         * Admin cannot change the user_id only 
-         * If flight_id has changed, recalculate payable and turn status into unpaid 
+         * Admin cannot change the user_id and the payables (affects the number of passengers booked for that booking) only 
+         * If flight_id has changed, recalculate payable and turn status into unpaid(?) 
         **/
     }
 
-    public function deleteBooking()
+    public function deleteBooking(String $id)
     {
         /**
          * Admin can delete booking (see: CebuPac)
-         * User cannot delete booking (sales are final and irrevocable, from their end LOL)
+         * User cannot delete booking (sales are final and irrevocable from their end)
         **/
+
+        $booking = Booking::findOrFail($id);
+
+        $this->deleteBookingRelatedTickets($id);
+
+        $booking->delete();
+
+        return $booking;
+    }
+
+    public function deleteBookingRelatedTickets(String $bookingId)
+    {
+        $booking = Booking::find($bookingId);
+        $booking->tickets()->delete();
     }
 }

@@ -36,5 +36,6 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
         Route::apiResource('city', CityController::class);
         Route::apiResource('route', RouteController::class);
         Route::apiResource('flight', FlightController::class)->except(['index']);
+        Route::apiResource('booking', BookingController::class)->except(['store']);
     });
 });

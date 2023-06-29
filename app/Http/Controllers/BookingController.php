@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Repositories\Booking\BookingRepositoryInterface; 
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -61,11 +62,12 @@ class BookingController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  String  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        //
+        log::info($id);
+        return response()->success('Booking has been successfully deleted', $this->repository->deleteBooking($id));
     }
 }
