@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\FlightController;
+use App\Http\Controllers\BookingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,5 +36,11 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
         Route::apiResource('city', CityController::class);
         Route::apiResource('route', RouteController::class);
         Route::apiResource('flight', FlightController::class)->except(['index']);
+        Route::apiResource('booking', BookingController::class)->except(['store']);
+    });
+
+    Route::group(['middleware' => ['role:client']], function(){
+        Route::get('/booking', [BookingController::class, 'indexUserBookings']);
+        Route::apiResource('booking', BookingController::class)->only(['store']);
     });
 });
