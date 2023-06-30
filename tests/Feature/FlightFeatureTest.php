@@ -177,9 +177,11 @@ class FlightFeatureTest extends TestCase
             'schedule'  => $flight[0]['schedule'],
         ]);
 
-        $newFlight = Flight::factory(1)->make();
+        $newFlight = Flight::factory(1)->make([
+            'capacity' => ($flight[0]->capacity) + 100,
+            'reserved' => ($flight[0]->reserved) + 50
+        ]);
         $newFlight = $newFlight[0]->toArray();
-
         $response = $this->actingAs($this->admin)->put("/api/admin/flight/{$flightId}", $newFlight);
 
         $response->assertStatus(200);
