@@ -110,6 +110,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Send Mail
+    |--------------------------------------------------------------------------
+    |
+    | Tweak this with boolean values to determine whether or not the system will
+    | send an email to MailTrap's testing server. That has a cap so be careful.
+    |
+    */
+
+    'send_mail' => false,
+
+    /*
+    |--------------------------------------------------------------------------
     | Encryption Key
     |--------------------------------------------------------------------------
     |

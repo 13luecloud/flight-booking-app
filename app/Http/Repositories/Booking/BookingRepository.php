@@ -15,8 +15,11 @@ use Illuminate\Support\Facades\Mail;
 
 class BookingRepository implements BookingRepositoryInterface
 {
-    // Set to false when testing 
-    private $sendMail = false;
+    private $sendMail;
+    public function __construct()
+    {
+      $this->sendMail = config('app.send_mail');
+    }
 
     public function getAllBookings()
     {
