@@ -80,15 +80,7 @@ class FlightRepository implements FlightRepositoryInterface
     private function isLessThanCurrentlyReserved(int $flightId, int $newValue, String $attribute)
     {
         $flight = Flight::find($flightId);
-        $existingReservations = 0;
-
-        $bookings = $flight->bookings;
-        foreach($bookings as $booking) {
-            $reservations = $booking->payable / $flight->price;
-            $existingReservations += $reservations;
-        }
-
-        if($existingReservations > $newValue) {
+        if($flight->reserved > $newValue) {
             throw new FlightLessThanReserved($attribute);
         }
     }
