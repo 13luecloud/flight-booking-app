@@ -29,6 +29,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     // Shared routes
     Route::group(['middleware' => ['role:admin,client']], function(){
         Route::apiResource('flight', FlightController::class)->only(['index']);
+        Route::post('/logout', [UserController::class, 'logout']);
     });    
 
     //Role-based routes
