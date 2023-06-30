@@ -4,15 +4,20 @@ namespace App\Http\Repositories\Booking;
 
 use App\Exceptions\BookingPassengersGreaterThanCapacity;
 use App\Http\Repositories\Ticket\TicketRepository;
+use App\Mail\BookingConfirmed;
 use App\Models\Booking; 
 use App\Models\Flight;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class BookingRepository implements BookingRepositoryInterface
 {
+    // Set to false when testing 
+    private $sendMail = false;
+
     public function getAllBookings()
     {
         return Booking::all();
@@ -21,7 +26,9 @@ class BookingRepository implements BookingRepositoryInterface
     public function getAllUserBookings()
     {
         $user = Auth::user();
-        return $user->bookings;
+        $bookings = Booking::where('user_id', $user->id)->get();
+        
+        return $bookings;
     }
 
     public function createBooking(array $data)
@@ -35,8 +42,7 @@ class BookingRepository implements BookingRepositoryInterface
 
         $user = Auth::user();
         $flight = Flight::find($data['flight_id']);
-        $ticket = new TicketRepository;
-        
+               
         $this->canAccommodatePassengers($flight, $data['passengers']);
         $this->updateFlightReserved($flight, $data['passengers']);
 
@@ -48,7 +54,12 @@ class BookingRepository implements BookingRepositoryInterface
         $booking['status'] = 'unpaid';
         Booking::create($booking);
 
+        $ticket = new TicketRepository;
         $ticket->createTickets($data['passengers'], $booking['id']);
+
+        if($this->sendMail) {
+            $this->sendMail($user->name, $user->email, $booking['id'], $booking['payable']);
+        }
 
         return Booking::find($booking['id']);
     }
@@ -140,5 +151,10 @@ class BookingRepository implements BookingRepositoryInterface
     {
         $booking = Booking::find($bookingId);
         $booking->tickets()->delete();
+    }
+
+    private function sendMail(String $name, String $email, String $bookingId, int $payable)
+    {
+        Mail::to($email)->send(new BookingConfirmed($name, $bookingId, $payable));
     }
 }

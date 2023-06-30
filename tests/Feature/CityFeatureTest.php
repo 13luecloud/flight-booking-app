@@ -62,7 +62,7 @@ class CityFeatureTest extends TestCase
 
         foreach($cities as $city) {
             $response = $this->actingAs($this->user)->post("/api/admin/city", $city->toArray());
-
+            
             $response->assertStatus(200);
             $response->assertJsonStructure([
                 'success', 
