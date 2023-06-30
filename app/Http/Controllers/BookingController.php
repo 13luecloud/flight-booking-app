@@ -40,8 +40,9 @@ class BookingController extends Controller
      */
     public function store(BookingCreateRequest $request)
     {
-        log::info($request);
-        return response()->success('Successfully created booking', $this->repository->createBooking($request->validated()));
+        $data = $this->repository->createBooking($request->validated());
+
+        return response()->success('Successfully created booking', $data);
     }
 
     /**
@@ -75,7 +76,6 @@ class BookingController extends Controller
      */
     public function destroy($id)
     {
-        log::info($id);
         return response()->success('Successfully deleted booking', $this->repository->deleteBooking($id));
     }
 }

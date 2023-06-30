@@ -15,6 +15,9 @@ class CityFactory extends Factory
     public function definition()
     {
         $city = $this->faker->city(); 
+        // while($city = "Muñoz" || $city = "Biñan") {
+        //     $city = $this->faker->city(); 
+        // }
 
         return [
             'name' => $city,
